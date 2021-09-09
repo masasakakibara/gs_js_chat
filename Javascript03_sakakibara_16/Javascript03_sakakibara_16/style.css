@@ -1,0 +1,24 @@
+body {
+    background-color: gainsboro;
+}
+
+h1 {
+    color: blueviolet;
+    text-align: center;
+}
+
+div {
+    text-align: left;
+}
+
+button{
+    background-color: rgb(43, 220, 226);
+}
+
+textarea {
+    vertical-align:top;
+}
+
+#output {
+    background-color: rgba(0, 255, 255, 0.623);
+}

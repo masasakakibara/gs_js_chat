@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chatアプリ</title>
+</head>
+
+<body>
+  <!-- コンテンツ表示画面 -->
+<h1>リアルタイムチャット</h1>
+<p>使い方<br>
+    1)入力する人の名前をいれてください<br>
+    2)テキストを入力したら、<br>
+    3)「入力日時の確認」キーを押して、入力した日時をいれてください<br>
+    4)最後に「送信」あるいはEnterキーを押して送信
+</p>
+
+  <div>名前<input type="text" id="username"></div>
+  <div>
+    テキスト
+    <textarea name="" id="text" cols="30" rows="10"></textarea>
+  </div>
+  <!-- colsは1行分の文字数。rowは入れられる行数 -->
+  
+      <!-- 前回付けた「ボタンを押すと日時を返してくる機能」をいれる-->
+    <button id="date" class="btn">入力日時の確認</button>
+    <p id="today"></p>
+    
+  <div>
+    <button id="send">送信</button>
+  </div>
+
+
+  <div>
+    <!-- チャット文字がリスト表示される。保存されたデータが表示される箇所 -->
+    <div id="output"></div>
+  </div>
+
+  <!-- CSS追加しする -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!--/ コンテンツ表示画面 -->
+
+  <!-- JQuery -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- JQuery -->
+
+  <!--** 以下Firebase **-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- 6.6.1に該当する箇所はfirebaseのバージョンですので更新されるたびに随時変わります🤗 -->
+  <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAds6AAE7Mjrdc9Ql-HopyifTctvv9hE0k",
+      authDomain: "dev21chat-c58f9.firebaseapp.com",
+      databaseURL: "https://dev21chat-c58f9-default-rtdb.firebaseio.com/",
+      projectId: "dev21chat-c58f9",
+      storageBucket: "dev21chat-c58f9.appspot.com",
+      messagingSenderId: "698848655894",
+      appId: ""
+    //   提出時にはappIdを削除してから提出しないと公開されてしまう
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    //firebaseのデーターベース（保存させる場所）を使いますよ。
+    // リアルタイム通信をする
+    const newPostRef = firebase.database().ref();
+
+    // ここから下にjqueryの処理を書いて練習します
+    // 送信ボタンをクリックされたら次の処理をする
+    $("#send").on("click", function () {
+      newPostRef.push({
+        username: $("#username").val(), //名前
+        text: $("#text").val(), //テキストエリア
+      })
+      $("#username").val(""); //入力した名前を空にする 
+      $("#text").val(""); //入力したメッセージを空にする
+    });
+
+    // 送信処理２　Enterボタンで送信できるようにする（Keydownを使う）
+    $("#text").on("keydown", function (e) {
+        console.log(e);
+        if(e.keyCode==13){
+            newPostRef.push({
+                username: $("#username").val(), //名前
+                text: $("#text").val(), //テキストエリア
+      })
+      $("#username").val(""); //入力した名前を空にする 
+      $("#text").val(""); //入力したメッセージを空にする
+        }
+    });
+
+    // 次に日付を読み込むコードを入れてみる。本当は日付だけ入れるつもりが、new dateは時間もいれてくる。。
+    $("#date").on("click",function(){
+        const now = new Date();
+    // const year = now.getFullYear();
+    // const month = now.getMonth();
+    // const date = now.getDate();
+    // ３．表示処理をする
+        $("#today").html(Date);
+    });
+
+    // 受信処理
+    newPostRef.on("child_added", function (data) {
+      let v = data.val(); //ここに保存されたデータが全て入ってくる
+      let k = data.key; //今回は使いませんー＞使う
+      console.log(k, 'keyのこと')
+      console.log(v);
+      let str = `<p class="${k}">${v.username}<br>${v.text}</p>`;
+
+      // ここでデータをhtmlに埋め込む。prepend上に追加していく。htmlは毎回上書きしてしまうので使わない
+      $("#output").prepend(str);
+    })
+
+  </script>
+</body>
+
+</html>
